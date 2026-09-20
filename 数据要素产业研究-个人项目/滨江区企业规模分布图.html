@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>杭州市滨江区企业分布图</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .custom-div-icon {
+            background: transparent;
+            border: none;
+        }
+        
+        .legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 999;
+            min-width: 200px;
+        }
+        
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #333;
+            border-bottom: 2px solid #1E88E5;
+            padding-bottom: 10px;
+        }
+        
+        .legend-item {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .legend-item svg {
+            margin-right: 10px;
+        }
+        
+        .stats {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 999;
+            min-width: 250px;
+        }
+        
+        .stats-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        
+        .stats-item {
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        
+        .stats-label {
+            color: #666;
+        }
+        
+        .stats-value {
+            font-weight: bold;
+            color: #1E88E5;
+        }
+        
+        .leaflet-popup-content {
+            min-width: 300px;
+            max-width: 350px;
+        }
+        
+        .info-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .info-row {
+            margin: 6px 0;
+            font-size: 13px;
+        }
+        
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: #333;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .badge-hightech {
+            background: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="legend">
+        <div class="legend-title">📊 企业规模</div>
+        <div class="legend-item">
+            <svg width="24" height="36" viewBox="0 0 24 36">
+                <path d="M12 0C5.4 0 0 5.4 0 12c0 7.2 12 24 12 24s12-16.8 12-24C24 5.4 18.6 0 12 0z" fill="#FF5722"/>
+                <circle cx="12" cy="11" r="5" fill="white" opacity="0.8"/>
+            </svg>
+            <span>L - 大型企业</span>
+        </div>
+        <div class="legend-item">
+            <svg width="24" height="36" viewBox="0 0 24 36">
+                <path d="M12 0C5.4 0 0 5.4 0 12c0 7.2 12 24 12 24s12-16.8 12-24C24 5.4 18.6 0 12 0z" fill="#2196F3"/>
+                <circle cx="12" cy="11" r="5" fill="white" opacity="0.8"/>
+            </svg>
+            <span>M - 中型企业</span>
+        </div>
+        <div class="legend-item">
+            <svg width="24" height="36" viewBox="0 0 24 36">
+                <path d="M12 0C5.4 0 0 5.4 0 12c0 7.2 12 24 12 24s12-16.8 12-24C24 5.4 18.6 0 12 0z" fill="#8BC34A"/>
+                <circle cx="12" cy="11" r="5" fill="white" opacity="0.8"/>
+            </svg>
+            <span>S - 小型企业</span>
+        </div>
+        <div class="legend-item">
+            <svg width="24" height="36" viewBox="0 0 24 36">
+                <path d="M12 0C5.4 0 0 5.4 0 12c0 7.2 12 24 12 24s12-16.8 12-24C24 5.4 18.6 0 12 0z" fill="#FF9800"/>
+                <circle cx="12" cy="11" r="5" fill="white" opacity="0.8"/>
+            </svg>
+            <span>XS - 微型企业</span>
+        </div>
+    </div>
+    
+    <div class="stats">
+        <div class="stats-title">📈 统计信息</div>
+        <div class="stats-item">
+            <span class="stats-label">总企业数:</span>
+            <span class="stats-value">37 家</span>
+        </div>
+        <div class="stats-item">
+            <span class="stats-label">成功标注:</span>
+            <span class="stats-value">37 家</span>
+        </div>
+        <div class="stats-item">
+            <span class="stats-label">高新企业:</span>
+            <span class="stats-value">31 家</span>
+        </div>
+        <div class="stats-item">
+            <span class="stats-label">总专利数:</span>
+            <span class="stats-value">53705 个</span>
+        </div>
+        <div class="stats-item">
+            <span class="stats-label">总软著数:</span>
+            <span class="stats-value">8347 个</span>
+        </div>
+    </div>
+
+    <script>
+        // 初始化地图
+        var map = L.map('map').setView([30.209, 120.212], 13);
+        
+        // 使用高德地图瓦片
+        L.tileLayer('https://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+            attribution: '© 高德地图'
+        }).addTo(map);
+        
+        // 颜色映射
+        var colorMap = {
+            'L': '#FF5722',
+            'M': '#2196F3', 
+            'S': '#8BC34A',
+            'XS': '#FF9800'
+        };
+        
+        var nameMap = {
+            'L': '大型',
+            'M': '中型',
+            'S': '小型',
+            'XS': '微型'
+        };
+        
+        // 创建水滴状图标
+        function createMarkerIcon(color) {
+            var svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 0 28 40">' +
+                '<path d="M14 0C6.3 0 0 6.3 0 14c0 8.4 14 26 14 26s14-17.6 14-26C28 6.3 21.7 0 14 0z" ' +
+                'fill="' + color + '" stroke="#ffffff" stroke-width="2"/>' +
+                '<circle cx="14" cy="13" r="6" fill="white" opacity="0.9"/>' +
+                '</svg>';
+            
+            return L.divIcon({
+                html: svgIcon,
+                className: 'custom-div-icon',
+                iconSize: [28, 40],
+                iconAnchor: [14, 40],
+                popupAnchor: [0, -40]
+            });
+        }
+        
+        // 企业数据
+        var companies = [{"name": "杭州睿琪软件有限公司", "address": "浙江省杭州市滨江区六和路368号一幢（北）二楼B2019室", "size": "XS", "capital": 153.711, "employees": 3, "hightech": "否", "patents": 62, "software": 19, "ip_total": 81, "investment": 1, "financing": "未披露", "year": 2009, "age": 16, "lng": 120.1461175234148, "lat": 30.19103279279811}, {"name": "杭州北冥星火科技有限公司", "address": "浙江省杭州市滨江区长河街道聚才路239号3幢912室", "size": "XS", "capital": 100.0, "employees": 1, "hightech": "否", "patents": 10, "software": 12, "ip_total": 22, "investment": 0, "financing": "种子轮", "year": 2022, "age": 3, "lng": 120.20364132522118, "lat": 30.186909895314347}, {"name": "阿里巴巴（中国）有限公司", "address": "浙江省杭州市滨江区长河街道网商路699号4号楼5楼508室", "size": "L", "capital": 108842.27475, "employees": 1106, "hightech": "是", "patents": 8172, "software": 350, "ip_total": 8522, "investment": 60, "financing": "IPO上市", "year": 2007, "age": 18, "lng": 120.1969391576418, "lat": 30.19528903777725}, {"name": "杭州趣链科技有限公司", "address": "浙江省杭州市滨江区西兴街道月明路199号2号楼1701室", "size": "M", "capital": 4869.0085, "employees": 185, "hightech": "是", "patents": 946, "software": 208, "ip_total": 1154, "investment": 49, "financing": "股权融资", "year": 2016, "age": 9, "lng": 120.23696001556958, "lat": 30.21187343133597}, {"name": "杭州半云科技有限公司", "address": "浙江省杭州市滨江区长河街道平乐街16号1号楼12253室", "size": "S", "capital": 1296.93671, "employees": 55, "hightech": "是", "patents": 82, "software": 178, "ip_total": 260, "investment": 13, "financing": "A轮", "year": 2016, "age": 9, "lng": 120.18995546111556, "lat": 30.200021414381}, {"name": "杭州华量软件有限公司", "address": "浙江省杭州市滨江区长河街道滨安路1186-1号1702室", "size": "S", "capital": 300.0, "employees": 21, "hightech": "是", "patents": 13, "software": 72, "ip_total": 85, "investment": 2, "financing": "战略融资", "year": 2015, "age": 10, "lng": 120.18593239988913, "lat": 30.190677551041905}, {"name": "杭州当虹科技股份有限公司", "address": "浙江省杭州市滨江区长河街道众创路309号13楼", "size": "M", "capital": 11060.1424, "employees": 256, "hightech": "是", "patents": 551, "software": 473, "ip_total": 1024, "investment": 21, "financing": "定向增发", "year": 2010, "age": 15, "lng": 120.21223065301596, "lat": 30.20059183737272}, {"name": "杭州袋鼠云科技有限公司", "address": "中国（浙江）自由贸易试验区杭州市滨江区长河街道越达巷82号3层329室", "size": "XS", "capital": 500.0, "employees": 1, "hightech": "否", "patents": 2, "software": 2, "ip_total": 4, "investment": 2, "financing": "未披露", "year": 2021, "age": 4, "lng": 120.19346199667378, "lat": 30.194574526022286}, {"name": "杭州安脉盛智能技术有限公司", "address": "浙江省杭州市滨江区西兴街道阡陌路482号B楼第十七层", "size": "M", "capital": 2937.8999, "employees": 159, "hightech": "是", "patents": 327, "software": 77, "ip_total": 404, "investment": 3, "financing": "D轮", "year": 2016, "age": 9, "lng": 120.2289950999348, "lat": 30.21439911278434}, {"name": "杭州迪普科技股份有限公司", "address": "浙江省杭州市滨江区月明路595号迪普科技18楼", "size": "L", "capital": 64382.9039, "employees": 931, "hightech": "是", "patents": 2186, "software": 95, "ip_total": 2281, "investment": 3, "financing": "IPO上市", "year": 2008, "age": 17, "lng": 120.22777996207144, "lat": 30.211128221471576}, {"name": "浙江众合科技股份有限公司", "address": "杭州市滨江区江汉路1785号双城国际4号楼17层", "size": "L", "capital": 67820.7158, "employees": 323, "hightech": "是", "patents": 494, "software": 175, "ip_total": 669, "investment": 39, "financing": "战略融资", "year": 1999, "age": 26, "lng": 120.20802182221006, "lat": 30.21297106647452}, {"name": "帕科视讯科技（杭州）股份有限公司", "address": "浙江省杭州市滨江区长河街道众创路309号6楼601室", "size": "M", "capital": 3077.516, "employees": 74, "hightech": "是", "patents": 65, "software": 58, "ip_total": 123, "investment": 6, "financing": "B轮", "year": 2007, "age": 18, "lng": 120.21223065301596, "lat": 30.20059183737272}, {"name": "浙江汇信科技有限公司", "address": "浙江省杭州市滨江区长河街道江汉路1785号网新双城大厦4幢2501-5室", "size": "S", "capital": 3000.0, "employees": 111, "hightech": "是", "patents": 12, "software": 162, "ip_total": 174, "investment": 3, "financing": "天使轮", "year": 2003, "age": 22, "lng": 120.20739651174456, "lat": 30.21310947935351}, {"name": "杭州拓深科技有限公司", "address": "浙江省杭州市滨江区长河街道建业路511号华创大厦2201室（自主申报）", "size": "M", "capital": 5910.5151, "employees": 114, "hightech": "是", "patents": 145, "software": 33, "ip_total": 178, "investment": 14, "financing": "D轮", "year": 2015, "age": 10, "lng": 120.187290278498, "lat": 30.194156788621974}, {"name": "新华三技术有限公司", "address": "浙江省杭州市滨江区长河路466号", "size": "L", "capital": 66198.0, "employees": 5957, "hightech": "是", "patents": 8475, "software": 698, "ip_total": 9173, "investment": 11, "financing": "并购", "year": 2003, "age": 22, "lng": 120.2046675494358, "lat": 30.19101593601292}, {"name": "杭州宇视科技有限公司", "address": "中国（浙江）自由贸易试验区杭州市滨江区西兴街道协同路369号", "size": "L", "capital": 65496.0, "employees": 2955, "hightech": "是", "patents": 3959, "software": 373, "ip_total": 4332, "investment": 13, "financing": "并购", "year": 2011, "age": 14, "lng": 120.2376965362572, "lat": 30.212974187398423}, {"name": "浙江大华技术股份有限公司", "address": "杭州市滨江区滨安路1187号", "size": "L", "capital": 328675.5574, "employees": 8256, "hightech": "是", "patents": 10781, "software": 999, "ip_total": 11780, "investment": 71, "financing": "IPO上市", "year": 2001, "age": 24, "lng": 120.18552061664336, "lat": 30.18944020393149}, {"name": "杭州曼孚科技有限公司", "address": "浙江省杭州市滨江区西兴街道丹枫路399号2幢301室", "size": "S", "capital": 552.7678, "employees": 27, "hightech": "是", "patents": 17, "software": 20, "ip_total": 37, "investment": 11, "financing": "A轮", "year": 2018, "age": 7, "lng": 120.22500770143712, "lat": 30.219979707296627}, {"name": "杭州聚光科技股份有限公司", "address": "浙江省杭州市滨江区滨安路760号", "size": "L", "capital": 44873.76, "employees": 969, "hightech": "是", "patents": 847, "software": 471, "ip_total": 1318, "investment": 84, "financing": "定向增发", "year": 2002, "age": 23, "lng": 120.20499300552206, "lat": 30.193458110430072}, {"name": "杭州安恒信息技术股份有限公司", "address": "浙江省杭州市滨江区西兴街道联慧街188号", "size": "L", "capital": 10206.5545, "employees": 2046, "hightech": "是", "patents": 2471, "software": 292, "ip_total": 2763, "investment": 117, "financing": "定向增发", "year": 2007, "age": 18, "lng": 120.23460771276116, "lat": 30.215811221910798}, {"name": "杭州合众数据技术有限公司", "address": "中国（浙江）自由贸易试验区杭州市滨江区西兴街道丹枫路399号4幢701、801室", "size": "M", "capital": 19200.0, "employees": 189, "hightech": "是", "patents": 26, "software": 154, "ip_total": 180, "investment": 3, "financing": "战略融资", "year": 2003, "age": 22, "lng": 120.22500770143712, "lat": 30.219979707296627}, {"name": "杭州中控技术股份有限公司", "address": "浙江省杭州市滨江区六和路309号", "size": "L", "capital": 79059.1256, "employees": 2737, "hightech": "是", "patents": 2043, "software": 552, "ip_total": 2595, "investment": 42, "financing": "战略融资", "year": 1999, "age": 26, "lng": 120.14499985169928, "lat": 30.186239417301955}, {"name": "火石创造科技有限公司", "address": "浙江省杭州市滨江区西兴街道阡陌路482号B楼第七层", "size": "M", "capital": 3665.5733, "employees": 144, "hightech": "是", "patents": 83, "software": 53, "ip_total": 136, "investment": 10, "financing": "B轮", "year": 2015, "age": 10, "lng": 120.2289950999348, "lat": 30.21439911278434}, {"name": "创业慧康科技股份有限公司", "address": "浙江省杭州市滨江区浦沿街道坚塔街708号6楼", "size": "L", "capital": 154912.4692, "employees": 958, "hightech": "是", "patents": 123, "software": 763, "ip_total": 886, "investment": 58, "financing": "股权融资", "year": 1997, "age": 28, "lng": 120.14199295366572, "lat": 30.167277911266325}, {"name": "杭州海康威视数字技术股份有限公司", "address": "浙江省杭州市滨江区阡陌路555号", "size": "L", "capital": 916487.155, "employees": 12616, "hightech": "是", "patents": 10527, "software": 3, "ip_total": 10530, "investment": 67, "financing": "股权融资", "year": 2001, "age": 24, "lng": 120.22700211933036, "lat": 30.21460001911116}, {"name": "连连数字科技股份有限公司", "address": "浙江省杭州市滨江区越达巷79号1号楼12楼B3", "size": "S", "capital": 107906.0, "employees": 22, "hightech": "否", "patents": 1, "software": 17, "ip_total": 18, "investment": 9, "financing": "IPO上市", "year": 2009, "age": 16, "lng": 120.19259351490672, "lat": 30.1937791612118}, {"name": "浙江和仁科技股份有限公司", "address": "浙江省杭州市滨江区西兴街道新联路625号", "size": "L", "capital": 26256.0141, "employees": 542, "hightech": "是", "patents": 19, "software": 310, "ip_total": 329, "investment": 26, "financing": "未披露", "year": 2010, "age": 15, "lng": 120.2307489516125, "lat": 30.21397958782905}, {"name": "杭州优云科技股份有限公司", "address": "浙江省杭州市滨江区浦沿街道南环路3820号卓信大厦611-612室", "size": "M", "capital": 9000.0, "employees": 202, "hightech": "是", "patents": 70, "software": 43, "ip_total": 113, "investment": 12, "financing": "B轮", "year": 2017, "age": 8, "lng": 120.16117842376454, "lat": 30.18498796568072}, {"name": "杭州泰格医药科技股份有限公司", "address": "浙江省杭州市滨江区西兴街道聚工路19号8幢20层2001-2010室", "size": "L", "capital": 86494.857, "employees": 348, "hightech": "是", "patents": 17, "software": 173, "ip_total": 190, "investment": 58, "financing": "IPO上市", "year": 2004, "age": 21, "lng": 120.21882700020628, "lat": 30.187953727765294}, {"name": "虹软科技股份有限公司", "address": "浙江省杭州市滨江区长河街道滨兴路392号（虹软大厦）19楼", "size": "L", "capital": 40117.04, "employees": 700, "hightech": "是", "patents": 173, "software": 98, "ip_total": 271, "investment": 21, "financing": "D轮", "year": 2003, "age": 22, "lng": 120.21254784469151, "lat": 30.19895952914496}, {"name": "杭州光云科技股份有限公司", "address": "浙江省杭州市滨江区浦沿街道坚塔街599号10层1001室", "size": "M", "capital": 42582.4684, "employees": 279, "hightech": "是", "patents": 20, "software": 83, "ip_total": 103, "investment": 46, "financing": "IPO上市", "year": 2013, "age": 12, "lng": 120.14199295366572, "lat": 30.167277911266325}, {"name": "杭州萤石网络股份有限公司", "address": "浙江省杭州市滨江区西兴街道启智东街188号", "size": "L", "capital": 78750.0, "employees": 667, "hightech": "是", "patents": 183, "software": 30, "ip_total": 213, "investment": 2, "financing": "IPO上市", "year": 2015, "age": 10, "lng": 120.23707599999992, "lat": 30.209918096794134}, {"name": "恒生电子股份有限公司", "address": "浙江省杭州市滨江区滨兴路1888号43层", "size": "L", "capital": 189176.7475, "employees": 5676, "hightech": "是", "patents": 537, "software": 999, "ip_total": 1536, "investment": 132, "financing": "股权融资", "year": 2000, "age": 25, "lng": 120.19310285413088, "lat": 30.19702324433978}, {"name": "信雅达科技股份有限公司", "address": "浙江省杭州市滨江区江南大道3888号信雅达科技大厦", "size": "L", "capital": 46631.8309, "employees": 1399, "hightech": "是", "patents": 132, "software": 228, "ip_total": 360, "investment": 30, "financing": "A股上市", "year": 1996, "age": 29, "lng": 120.16756995729855, "lat": 30.19106315061223}, {"name": "杭州乒乓智能技术有限公司", "address": "浙江省杭州市滨江区长河街道创慧街158号15层", "size": "L", "capital": 36500.0, "employees": 893, "hightech": "是", "patents": 134, "software": 72, "ip_total": 206, "investment": 10, "financing": "D轮", "year": 2015, "age": 10, "lng": 120.21461502533109, "lat": 30.19930678124849}, {"name": "杭州市数据要素创新中心有限公司", "address": "浙江省杭州市滨江区西兴街道物联网街276号1号楼4楼4016室", "size": "M", "capital": 20000.0, "employees": 101, "hightech": "否", "patents": 0, "software": 2, "ip_total": 2, "investment": 0, "financing": "股权融资", "year": 2005, "age": 20, "lng": 120.23305430548156, "lat": 30.216683276259594}, {"name": "杭州企数智联科技有限公司", "address": "浙江省杭州市滨江区长河街道泰安路239号盾安发展大厦1319室", "size": "XS", "capital": 105.0, "employees": 2, "hightech": "否", "patents": 0, "software": 0, "ip_total": 0, "investment": 1, "financing": "未披露", "year": 2022, "age": 3, "lng": 120.21517035779736, "lat": 30.21596788759899}];
+        
+        // 调试：输出前5个企业的规模值
+        console.log('前5个企业的规模值:');
+        for (var i = 0; i < Math.min(5, companies.length); i++) {
+            console.log('  企业: ' + companies[i].name + ', 规模: "' + companies[i].size + '"');
+        }
+        
+        // 百度坐标转GCJ02（高德使用GCJ02）
+        function bd09ToGcj02(lng, lat) {
+            var X_PI = Math.PI * 3000.0 / 180.0;
+            var x = lng - 0.0065;
+            var y = lat - 0.006;
+            var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * X_PI);
+            var theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * X_PI);
+            var lng_gcj = z * Math.cos(theta);
+            var lat_gcj = z * Math.sin(theta);
+            return [lng_gcj, lat_gcj];
+        }
+        
+        // 统计各规模数量
+        var sizeStats = {};
+        
+        // 添加标记
+        companies.forEach(function(company) {
+            if (company.lng && company.lat) {
+                var coords = bd09ToGcj02(company.lng, company.lat);
+                
+                // 获取颜色 - 使用 trim() 确保没有空格
+                var size = company.size.trim();
+                var color = colorMap[size];
+                
+                // 统计
+                sizeStats[size] = (sizeStats[size] || 0) + 1;
+                
+                // 如果没找到颜色，使用默认灰色
+                if (!color) {
+                    console.warn('未知规模: "' + size + '" 企业: ' + company.name);
+                    color = '#999999';
+                }
+                
+                var sizeName = nameMap[size] || size || '未知';
+                
+                // 创建水滴状标记
+                var marker = L.marker([coords[1], coords[0]], {
+                    icon: createMarkerIcon(color)
+                }).addTo(map);
+                
+                // 弹出窗口内容
+                var popupContent = 
+                    '<div class="info-title">' + company.name + '</div>' +
+                    '<div class="info-row"><span class="info-label">规模: </span>' +
+                    '<span class="badge" style="background:' + color + '">' + sizeName + '</span></div>' +
+                    '<div class="info-row"><span class="info-label">地址: </span>' +
+                    '<span class="info-value">' + (company.address || '-') + '</span></div>' +
+                    '<div class="info-row"><span class="info-label">注册资本: </span>' +
+                    '<span class="info-value">' + company.capital.toLocaleString() + ' 万元</span></div>' +
+                    '<div class="info-row"><span class="info-label">参保人数: </span>' +
+                    '<span class="info-value">' + company.employees + ' 人</span></div>' +
+                    '<div class="info-row"><span class="info-label">高新企业: </span>' +
+                    (company.hightech === '是' ? '<span class="badge badge-hightech">✓ 是</span>' : '否') + '</div>' +
+                    '<div class="info-row"><span class="info-label">专利: </span>' +
+                    '<span class="info-value">' + company.patents + ' 个</span></div>' +
+                    '<div class="info-row"><span class="info-label">软著: </span>' +
+                    '<span class="info-value">' + company.software + ' 个</span></div>' +
+                    '<div class="info-row"><span class="info-label">对外投资: </span>' +
+                    '<span class="info-value">' + company.investment + ' 家</span></div>' +
+                    '<div class="info-row"><span class="info-label">成立: </span>' +
+                    '<span class="info-value">' + company.year + ' 年（' + company.age + '年）</span></div>' +
+                    (company.financing && company.financing !== 'nan' ? '<div class="info-row"><span class="info-label">融资: </span>' +
+                    '<span class="info-value">' + company.financing + '</span></div>' : '');
+                
+                marker.bindPopup(popupContent);
+            }
+        });
+        
+        // 输出统计信息
+        console.log('各规模企业数量:', sizeStats);
+        console.log('总共加载了 ' + companies.length + ' 家企业');
+    </script>
+</body>
+</html>
